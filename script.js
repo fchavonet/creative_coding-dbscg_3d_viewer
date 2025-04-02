@@ -378,6 +378,6 @@ function loadTexture(path, onLoad) {
 }
 
 // Load card textures.
-loadTexture("./assets/images/front.png", tex => uniforms.uFrontTexture.value = tex);
-loadTexture("./assets/images/alpha.png", tex => uniforms.uMetalMap.value = tex);
-loadTexture("./assets/images/back.png", tex => uniforms.uBackTexture.value = tex);
+loadTexture("./assets/images/front.webp", tex => uniforms.uFrontTexture.value = tex);
+loadTexture("./assets/images/alpha.webp", tex => uniforms.uMetalMap.value = tex);
+loadTexture("./assets/images/back.webp", tex => uniforms.uBackTexture.value = tex);
