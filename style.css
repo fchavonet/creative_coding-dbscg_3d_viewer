@@ -24,6 +24,8 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
+    touch-action: none;
     font-family: monospace, sans-serif;
     font-size: 0.75rem;
     transition: background-color 0.3s;
