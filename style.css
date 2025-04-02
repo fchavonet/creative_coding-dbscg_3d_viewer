@@ -52,6 +52,12 @@ a {
     color: var(--dark-color);
 }
 
+canvas {
+    display: block;
+    cursor: default;
+    z-index: -1;
+}
+
 /* MAIN */
 #toggle-mode-btn {
     width: 2rem;
