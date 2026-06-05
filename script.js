@@ -1,73 +1,35 @@
-/*********************
-* RESPONSIVE WARNING *
-*********************/
+/******************************
+* RESPONSIVE WARNING BEHAVIOR *
+******************************/
 
 const responsiveWarning = document.getElementById("responsive-warning");
-// "true" if the site is optimized for responsive design, "false" if not.
-const responsiveDesign = true;
+// Enable/disable responsive warning.
+const responsiveDesign = false;
+// Mobile width limit.
+const threshold = 768;
 
-// Show mobile warning if the user is on mobile and responsive-design is false.
-if (!responsiveDesign && window.innerWidth <= 768) {
-	responsiveWarning.classList.add("show");
+// Show or hide modal based on screen size.
+function checkResponsiveState() {
+  const small = window.innerWidth <= threshold;
+
+  if (!responsiveDesign && small) {
+    if (!responsiveWarning.open) {
+      responsiveWarning.showModal();
+      document.body.classList.add("overflow-hidden");
+    }
+  } else {
+    if (responsiveWarning.open) {
+      responsiveWarning.close();
+      document.body.classList.remove("overflow-hidden");
+    }
+  }
 }
 
+// Initial check.
+checkResponsiveState();
 
-/***********************
-* MODE TOGGLE BEHAVIOR *
-***********************/
-
-// Get elements that change with the mode.
-const toggleModeBtn = document.getElementById("toggle-mode-btn");
-const portfolioLink = document.getElementById("portfolio-link");
-const body = document.body;
-
-// Function to apply mode.
-function applyMode(mode) {
-	body.classList.remove("light-mode", "dark-mode");
-	body.classList.add(mode);
-
-	if (mode === "dark-mode") {
-		// Set dark mode styles.
-		toggleModeBtn.style.color = "rgb(245, 245, 245)";
-		toggleModeBtn.innerHTML = '<i class="bi bi-sun-fill"></i>';
-
-		portfolioLink.style.color = "rgb(245, 245, 245)";
-
-		responsiveWarning.style.backgroundColor = "rgb(2, 4, 8)";
-	} else {
-		// Set light mode styles.
-		toggleModeBtn.style.color = "rgb(2, 4, 8)";
-		toggleModeBtn.innerHTML = '<i class="bi bi-moon-stars-fill"></i>';
-
-		portfolioLink.style.color = "rgb(2, 4, 8)";
-
-		responsiveWarning.style.backgroundColor = "rgb(245, 245, 245)";
-	}
-}
-
-// Check and apply saved mode on page load
-let savedMode = localStorage.getItem("mode");
-
-if (savedMode === null) {
-	savedMode = "light-mode"; // Default mode.
-}
-applyMode(savedMode);
-
-// Toggle mode and save preference.
-toggleModeBtn.addEventListener("click", function () {
-	let newMode;
-
-	if (body.classList.contains("light-mode")) {
-		newMode = "dark-mode";
-	} else {
-		newMode = "light-mode";
-	}
-
-	applyMode(newMode);
-
-	// Save choice.
-	localStorage.setItem("mode", newMode);
-});
+// Real-time resize detection.
+window.addEventListener("resize", checkResponsiveState);
 
 
 /*****************
@@ -92,9 +54,9 @@ camera.position.z = 3;
 
 // Resize listener.
 window.addEventListener("resize", function () {
-	renderer.setSize(window.innerWidth, window.innerHeight);
-	camera.aspect = window.innerWidth / window.innerHeight;
-	camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
 });
 
 // Card dimensions.
@@ -126,28 +88,28 @@ const posAttr = geometry.attributes.position;
 const uvArray = new Float32Array(posAttr.count * 2);
 
 for (let i = 0; i < posAttr.count; i++) {
-	const x = posAttr.getX(i);
-	const y = posAttr.getY(i);
-	uvArray[2 * i] = (x + offset.x) / range.x;
-	uvArray[2 * i + 1] = (y + offset.y) / range.y;
+  const x = posAttr.getX(i);
+  const y = posAttr.getY(i);
+  uvArray[2 * i] = (x + offset.x) / range.x;
+  uvArray[2 * i + 1] = (y + offset.y) / range.y;
 }
 
 geometry.setAttribute("uv", new THREE.BufferAttribute(uvArray, 2));
 
 // Shader uniforms.
 const uniforms = {
-	uFrontTexture: { value: null },
-	uBackTexture: { value: null },
-	uMetalMap: { value: null },
-	uLightDirection: { value: new THREE.Vector3(0.5, 0.5, 1.0).normalize() },
-	uSpecularIntensity: { value: 0.05 },
-	uShininess: { value: 20.0 },
-	uMouse: { value: new THREE.Vector2(0.5, 0.5) },
-	uEnvColor: { value: new THREE.Vector3(1.0, 1.0, 1.0) },
-	uContrast: { value: 1.5 },
-	uOverallBrightness: { value: 0.8 },
-	uTime: { value: 0 },
-	uEnvMapIntensity: { value: 0.4 }
+  uFrontTexture: { value: null },
+  uBackTexture: { value: null },
+  uMetalMap: { value: null },
+  uLightDirection: { value: new THREE.Vector3(0.5, 0.5, 1.0).normalize() },
+  uSpecularIntensity: { value: 0.05 },
+  uShininess: { value: 20.0 },
+  uMouse: { value: new THREE.Vector2(0.5, 0.5) },
+  uEnvColor: { value: new THREE.Vector3(1.0, 1.0, 1.0) },
+  uContrast: { value: 1.5 },
+  uOverallBrightness: { value: 0.8 },
+  uTime: { value: 0 },
+  uEnvMapIntensity: { value: 0.4 }
 };
 
 // Vertex shader.
@@ -217,11 +179,11 @@ const fragmentShader = `
 
 // Create shader material.
 const material = new THREE.ShaderMaterial({
-	vertexShader,
-	fragmentShader,
-	uniforms,
-	side: THREE.DoubleSide,
-	transparent: true
+  vertexShader,
+  fragmentShader,
+  uniforms,
+  side: THREE.DoubleSide,
+  transparent: true
 });
 
 // Create and add the card mesh.
@@ -250,104 +212,104 @@ let targetRotationY = 0;
 
 // Pointer move.
 canvas.addEventListener("pointermove", function (e) {
-	const x = (e.clientX / window.innerWidth) * 2 - 1;
-	const y = -(e.clientY / window.innerHeight) * 2 + 1;
-	mouse.set(x, y);
+  const x = (e.clientX / window.innerWidth) * 2 - 1;
+  const y = -(e.clientY / window.innerHeight) * 2 + 1;
+  mouse.set(x, y);
 
-	raycaster.setFromCamera(mouse, camera);
-	const intersects = raycaster.intersectObject(card);
-	const overCard = intersects.length > 0;
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObject(card);
+  const overCard = intersects.length > 0;
 
-	const elapsed = Date.now() - pressStartTime;
+  const elapsed = Date.now() - pressStartTime;
 
-	if (isPointerDown && startedOverCard && elapsed > 150) {
-		canvas.style.cursor = "grabbing";
-	} else {
-		if (overCard) {
-			canvas.style.cursor = "pointer";
-		} else {
-			canvas.style.cursor = "default";
-		}
-	}
+  if (isPointerDown && startedOverCard && elapsed > 150) {
+    canvas.style.cursor = "grabbing";
+  } else {
+    if (overCard) {
+      canvas.style.cursor = "pointer";
+    } else {
+      canvas.style.cursor = "default";
+    }
+  }
 
-	if (isPointerDown && startedOverCard) {
-		const dx = e.clientX - pressStartPos.x;
-		const dy = e.clientY - pressStartPos.y;
-		const dist = Math.sqrt(dx * dx + dy * dy);
+  if (isPointerDown && startedOverCard) {
+    const dx = e.clientX - pressStartPos.x;
+    const dy = e.clientY - pressStartPos.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
 
-		if (isMobile && dist > 10) {
-			isTilting = true;
-		}
+    if (isMobile && dist > 10) {
+      isTilting = true;
+    }
 
-		if (isTilting) {
-			targetRotationX = y * -0.5;
-			if (flipped) {
-				targetRotationY = Math.PI + x * 0.75;
-			} else {
-				targetRotationY = x * 0.75;
-			}
-			uniforms.uMouse.value.set(e.clientX / window.innerWidth, 1 - e.clientY / window.innerHeight);
-		}
-	}
+    if (isTilting) {
+      targetRotationX = y * -0.5;
+      if (flipped) {
+        targetRotationY = Math.PI + x * 0.75;
+      } else {
+        targetRotationY = x * 0.75;
+      }
+      uniforms.uMouse.value.set(e.clientX / window.innerWidth, 1 - e.clientY / window.innerHeight);
+    }
+  }
 });
 
 // Pointer down.
 canvas.addEventListener("pointerdown", function (e) {
-	const x = (e.clientX / window.innerWidth) * 2 - 1;
-	const y = -(e.clientY / window.innerHeight) * 2 + 1;
-	mouse.set(x, y);
+  const x = (e.clientX / window.innerWidth) * 2 - 1;
+  const y = -(e.clientY / window.innerHeight) * 2 + 1;
+  mouse.set(x, y);
 
-	raycaster.setFromCamera(mouse, camera);
-	const intersects = raycaster.intersectObject(card);
-	const overCard = intersects.length > 0;
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObject(card);
+  const overCard = intersects.length > 0;
 
-	isPointerDown = true;
-	startedOverCard = overCard;
-	pressStartTime = Date.now();
-	pressStartPos = { x: e.clientX, y: e.clientY };
-	isTilting = !isMobile;
+  isPointerDown = true;
+  startedOverCard = overCard;
+  pressStartTime = Date.now();
+  pressStartPos = { x: e.clientX, y: e.clientY };
+  isTilting = !isMobile;
 });
 
 // Pointer up.
 canvas.addEventListener("pointerup", function (e) {
-	const dt = Date.now() - pressStartTime;
-	const dx = e.clientX - pressStartPos.x;
-	const dy = e.clientY - pressStartPos.y;
-	const dist = Math.sqrt(dx * dx + dy * dy);
+  const dt = Date.now() - pressStartTime;
+  const dx = e.clientX - pressStartPos.x;
+  const dy = e.clientY - pressStartPos.y;
+  const dist = Math.sqrt(dx * dx + dy * dy);
 
-	let isClick = false;
-	if (dt < 150 && dist < 10) {
-		isClick = true;
-	}
+  let isClick = false;
+  if (dt < 150 && dist < 10) {
+    isClick = true;
+  }
 
-	const x = (e.clientX / window.innerWidth) * 2 - 1;
-	const y = -(e.clientY / window.innerHeight) * 2 + 1;
-	mouse.set(x, y);
+  const x = (e.clientX / window.innerWidth) * 2 - 1;
+  const y = -(e.clientY / window.innerHeight) * 2 + 1;
+  mouse.set(x, y);
 
-	raycaster.setFromCamera(mouse, camera);
-	const intersects = raycaster.intersectObject(card);
-	const overCard = intersects.length > 0;
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObject(card);
+  const overCard = intersects.length > 0;
 
-	if (startedOverCard && isClick) {
-		flipped = !flipped;
-	}
+  if (startedOverCard && isClick) {
+    flipped = !flipped;
+  }
 
-	targetRotationX = 0;
-	if (flipped) {
-		targetRotationY = Math.PI;
-	} else {
-		targetRotationY = 0;
-	}
+  targetRotationX = 0;
+  if (flipped) {
+    targetRotationY = -Math.PI;
+  } else {
+    targetRotationY = 0;
+  }
 
-	uniforms.uMouse.value.set(0.5, 0.5);
-	isPointerDown = false;
-	isTilting = false;
+  uniforms.uMouse.value.set(0.5, 0.5);
+  isPointerDown = false;
+  isTilting = false;
 
-	if (overCard) {
-		canvas.style.cursor = "pointer";
-	} else {
-		canvas.style.cursor = "default";
-	}
+  if (overCard) {
+    canvas.style.cursor = "pointer";
+  } else {
+    canvas.style.cursor = "default";
+  }
 });
 
 
@@ -356,25 +318,25 @@ canvas.addEventListener("pointerup", function (e) {
 *************************/
 
 function animate() {
-	requestAnimationFrame(animate);
-	uniforms.uTime.value = clock.getElapsedTime();
-	card.rotation.x += (targetRotationX - card.rotation.x) * 0.1;
-	card.rotation.y += (targetRotationY - card.rotation.y) * 0.1;
-	renderer.render(scene, camera);
+  requestAnimationFrame(animate);
+  uniforms.uTime.value = clock.getElapsedTime();
+  card.rotation.x += (targetRotationX - card.rotation.x) * 0.1;
+  card.rotation.y += (targetRotationY - card.rotation.y) * 0.1;
+  renderer.render(scene, camera);
 }
 
 animate();
 
 // Texture loader utility.
 function loadTexture(path, onLoad) {
-	const loader = new THREE.TextureLoader();
-	loader.load(path, texture => {
-		texture.minFilter = THREE.LinearMipMapLinearFilter;
-		texture.magFilter = THREE.LinearFilter;
-		texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
-		texture.flipY = false;
-		onLoad(texture);
-	});
+  const loader = new THREE.TextureLoader();
+  loader.load(path, texture => {
+    texture.minFilter = THREE.LinearMipMapLinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    texture.flipY = false;
+    onLoad(texture);
+  });
 }
 
 // Load card textures.
