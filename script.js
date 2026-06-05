@@ -4,7 +4,7 @@
 
 const responsiveWarning = document.getElementById("responsive-warning");
 // Enable/disable responsive warning.
-const responsiveDesign = false;
+const responsiveDesign = true;
 // Mobile width limit.
 const threshold = 768;
 
